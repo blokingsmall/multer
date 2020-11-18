@@ -91,7 +91,7 @@ module.exports = {
             }
         })
         if(Object.keys(personInfo).length>0){
-            var editRuslt = await Axios.put('https://testenroll.houbo.org/profile',personInfo,{headers:{Authorization}})
+            var editRuslt = await Axios.put('/profile',personInfo,{headers:{Authorization}})
             if(editRuslt.data.code!==0){
                 ctx.body = editRuslt.data; 
                 return;
@@ -101,10 +101,10 @@ module.exports = {
             var editRuslt = {};
             try{
                 if(delivery_addresses.id){
-                    editRuslt = await Axios.put(`https://testenroll.houbo.org/delivery_addresses/${delivery_addresses.id}`,delivery_addresses,{headers:{Authorization}})
+                    editRuslt = await Axios.put(`/delivery_addresses/${delivery_addresses.id}`,delivery_addresses,{headers:{Authorization}})
                 }
                 else{
-                    editRuslt = await Axios.post(`https://testenroll.houbo.org/delivery_addresses`,delivery_addresses,{headers:{Authorization}})
+                    editRuslt = await Axios.post(`/delivery_addresses`,delivery_addresses,{headers:{Authorization}})
                 }
             }
             catch(err){

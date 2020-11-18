@@ -5,14 +5,16 @@ const cors = require('koa2-cors')
 
 const bodyParser = require('koa-bodyparser')
 
-const {SelectUserAll} = require('./DAO/user')
+//const {SelectUserAll} = require('./DAO/user')
 
 const router = require('./router');
 
 const Axios = require('axios')
 
+const {backendUrl} = require('./dev_options.json')
+
 Axios.interceptors.request.use(config=>{
-  config.baseURL = "https://testadm.houbo.org";
+  config.baseURL = backendUrl;
   config.timeout = 300000;
   config.headers["Content-Type"] ="application/json";
   return config
@@ -23,6 +25,8 @@ Axios.interceptors.request.use(config=>{
 
 
 const app = new koa()
+
+console.log()
 
 // SelectUserAll({usersWhere:[{id:1549956}]}).then(res=>{
 //   console.log(res)
