@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "@koa/cors": "^3.1.0",
+    "bluebird": "^3.7.2",
+    "koa": "^2.13.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-parser": "^1.0.8",
+    "koa-router": "^9.4.0",
+    "mysql2": "^2.1.0"
+  },
+  "devDependencies": {
+    "@koa/cors": "^3.1.0",
+    "axios": "^0.20.0",
+    "bluebird": "^3.7.2",
+    "koa": "^2.13.0",
+    "koa-bodyparser": "^4.3.0",
+    "koa-parser": "^1.0.8",
+    "koa-router": "^9.4.0",
+    "koa2-cors": "^2.0.6",
+    "mysql2": "^2.1.0"
+  }
+}
