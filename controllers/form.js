@@ -4,7 +4,7 @@ module.exports = {
     'GET /getform':async (ctx)=>{
       let {name,pageSize=10,pageNumber=1,totalNumber=10} = ctx.query;
       let result = await SelectAll({where:{name},limitConif:{pageSize,pageNumber,totalNumber}})
-      ctx.body = result;
+      ctx.body = result
      } ,
     'GET /getform/:id':async (ctx)=>{  //获取表单数据
       let {id} = ctx.params;

@@ -11,10 +11,10 @@ const router = require('./router');
 
 const Axios = require('axios')
 
-const {backendUrl} = require('./dev_options.json')
+const {enrollFrontUrl} = require('./dev_options.json')
 
 Axios.interceptors.request.use(config=>{
-  config.baseURL = backendUrl;
+  config.baseURL = enrollFrontUrl;
   config.timeout = 300000;
   config.headers["Content-Type"] ="application/json";
   return config
@@ -30,6 +30,8 @@ const app = new koa()
 //   console.log(res)
 // })
 
+app.use(cors());
+
 app.use(async (ctx,next)=>{
     let {req} = ctx;
     const getUserIp = (req) => {
@@ -38,14 +40,12 @@ app.use(async (ctx,next)=>{
           req.socket.remoteAddress ||
           req.connection.socket.remoteAddress;
       }
-    console.log(getUserIp(req))
     await next()
 })
 
-app.use(cors());
 
 app.use(bodyParser())
 
 app.use(router());
-app.listen(/test/g.test(backendUrl)?8081:8080)
+app.listen(/test/g.test(enrollFrontUrl)?8081:8080)
 

@@ -91,10 +91,17 @@ module.exports = {
             }
         })
         if(Object.keys(personInfo).length>0){
-            var editRuslt = await Axios.put('/profile',personInfo,{headers:{Authorization}})
-            if(editRuslt.data.code!==0){
-                ctx.body = editRuslt.data; 
-                return;
+            try{
+                var editRuslt = await Axios.put('/profile',personInfo,{headers:{Authorization}})
+                if(editRuslt.data.code!==0){
+                    ctx.body = editRuslt.data; 
+                    return;
+                }
+            }catch(err){
+                ctx.body = {
+                    code:1,
+                    message:'后台服务错误'
+                }
             }
         }
         if(Object.keys(delivery_addresses).length>0){
@@ -108,12 +115,18 @@ module.exports = {
                 }
             }
             catch(err){
-                console.log(err)
+                ctx.body = {
+                    code:1,
+                    message:'后台服务错误'
+                }
             }
             if(editRuslt.data.code!==0){
                 ctx.body = editRuslt.data; 
                 return;
             }
+        }
+        ctx.body = {
+            code:1,
         }
         res = await InsertForm({data,table_key,userId,courseId,orderNumber}) 
         ctx.body = res; 
