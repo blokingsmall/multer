@@ -32,18 +32,6 @@ const app = new koa()
 
 app.use(cors());
 
-app.use(async (ctx,next)=>{
-    let {req} = ctx;
-    const getUserIp = (req) => {
-        return req.headers['x-forwarded-for'] ||
-          req.connection.remoteAddress ||
-          req.socket.remoteAddress ||
-          req.connection.socket.remoteAddress;
-      }
-    await next()
-})
-
-
 app.use(bodyParser())
 
 app.use(router());
