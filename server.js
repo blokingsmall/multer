@@ -26,8 +26,6 @@ Axios.interceptors.request.use(config=>{
 
 const app = new koa()
 
-console.log()
-
 // SelectUserAll({usersWhere:[{id:1549956}]}).then(res=>{
 //   console.log(res)
 // })
@@ -49,6 +47,5 @@ app.use(cors());
 app.use(bodyParser())
 
 app.use(router());
-
-app.listen(8080)
+app.listen(/test/g.test(backendUrl)?8081:8080)
 
