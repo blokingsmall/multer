@@ -27,10 +27,8 @@ const SelectUserAll = async ({usersWhere})=>{ //limitConif
     let queryStr = `SELECT 
     users.major,users.graduatedSchoolCode,users.gender,users.emailAddress,users.birthDate,users.nickname,users.qqNumber,users.mobileNumber,cctalk.rollNumber,
     address.*
-    FROM ${userTable} as users  INNER JOIN ${addressTable} as address INNER JOIN ${cctalk_userTable} as cctalk ON 
-    users.id = address.userId OR users.id = cctalk.userId
-     ${whereStr?`WHERE ${whereStr}`:''} `
-      //ORDER BY id DESC LIMIT ${pageSize} OFFSET ${(pageNumber-1)*pageSize}
+    FROM ${userTable} as users  LEFT JOIN ${addressTable} as address on users.id = address.userId  LEFT JOIN ${cctalk_userTable} as cctalk ON  users.id = cctalk.userId
+     ${whereStr?`WHERE ${whereStr}`:''} AND users.status = '1' AND address.status = '1'`
       return new Promise((resolve,reject)=>{
         userPool.query(queryStr,async (err,rows)=>{
             if(err){
@@ -50,7 +48,7 @@ const becomeStr = obj =>{
         var narr = obj.reduce((prev,next)=>{
             let arr = []
             for(var i in next){
-                arr.push(`users.${i}='${next[i]}' AND users.status = '1' AND address.status = '1' `)
+                arr.push(`users.${i}='${next[i]}' `)
             }
             prev.push(arr.join(' AND '))
             return prev

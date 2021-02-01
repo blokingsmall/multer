@@ -2,6 +2,7 @@ const {InsertForm,SelectForm,UpdateForm,DeleteForm,SelectOne} = require('./../DA
 const FormData = require('./../DAO/form')
 const {SelectUserAll} = require('./../DAO/user')
 const Axios = require('axios');
+const {backendUrl} = require('./../dev_options.json')
 
 module.exports = {
     // 'GET /form_fields':async (ctx)=>{
@@ -39,7 +40,7 @@ module.exports = {
         let {headers} = ctx;
         let res = await Axios({
           method:'get',
-          url:`/enrolment_form_logs/${formId}`,
+          url:`${backendUrl}/enrolment_form_logs/${formId}`,
           params:{pageSize:99999},
           headers:{Authorization:headers["authorization"]}
         })
@@ -57,8 +58,12 @@ module.exports = {
                 searchArr.push({orderNumber:i.orderNumber,userId:i.userId,status:1})
                 searchId.push({id:i.userId})
             })
+            let nDate = new Date().getTime()
             let connectionData = await SelectUserAll({usersWhere:searchId})
+            console.log('第一次请求数据时间为',new Date().getTime() - nDate)
+            let sDate = new Date().getTime()
             let result = await SelectForm({where:searchArr})
+            console.log('第二次单次请求数据时间为',new Date().getTime() - sDate)
             let form_colums = await FormData.SelectForm({where:{id:formId}})
             if(result.code===0&&connectionData.code===0){
                 let newList = res.data.data.list.map((i,index)=>{

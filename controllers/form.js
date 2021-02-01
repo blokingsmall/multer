@@ -13,13 +13,32 @@ module.exports = {
       ctx.body =  reslut;
     },
     'POST /getform':async (ctx)=>{          //添加表单  
-      let { name='',formdata = {} } = ctx.request.body;//接受表单数据
+      let { name='',formdata = {source:[]} } = ctx.request.body;//接受表单数据
+      let {source} = formdata;
+      let arr = source.map(i=>i.formkey)
+      let nArr = []
+      let flag = [];
+      for(let i of arr){
+          if(nArr.indexOf(i)===-1){
+              nArr.push(i)
+          }else{
+            flag.push(i)
+          }
+      }
+      if(flag.length){
+        ctx.body = {
+          code:1,
+          message:`表单key存在重复${flag.join()}`
+        }
+        return;
+      }
       if(name===''){
          ctx.body = {
           code:1,
           message:'名称不能为空'
          }
       }
+    
       let res = await InsertForm({name,formdata}) // 将数据插入到数据库内
       ctx.body = res; //返回给前端
     },
@@ -43,6 +62,25 @@ module.exports = {
     'PUT /getform/:id':async (ctx)=>{
       let { id } = ctx.params;
       let {name,formdata,rule,max} = ctx.request.body;
+      if(formdata&&Object.keys(formdata).length){
+        let arr = formdata.source||[].map(i=>i.formkey)
+        let nArr = []
+        let flag = [];
+        for(let i of arr){
+            if(nArr.indexOf(i)===-1){
+                nArr.push(i)
+            }else{
+              flag.push(i)
+            }
+        }
+        if(flag.length){
+          ctx.body = {
+            code:1,
+            message:`表单key存在重复${flag.join()}`
+          }
+          return;
+        }
+      }
       let result = await UpdateForm({where:{id},data:{name,formdata,rule,max}})
       ctx.body = result;
     },

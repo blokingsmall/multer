@@ -11,7 +11,7 @@ function addMapping(router, mapping) {
         } else if (url.startsWith('POST ')) {
             var path = url.substring(5);
             router.post(path, mapping[url]);
-            //console.log(`register URL mapping: POST ${path}`);
+            console.log(`register URL mapping: POST ${path}`);
         } else if (url.startsWith('PUT ')) {
             var path = url.substring(4);
             router.put(path, mapping[url]);
