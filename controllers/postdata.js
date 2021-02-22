@@ -67,7 +67,7 @@ module.exports = {
             let form_colums = await FormData.SelectForm({where:{id:formId}})
             if(result.code===0&&connectionData.code===0){
                 let newList = res.data.data.list.map((i,index)=>{
-                    let json = result.data[index]?result.data[index].data:{}
+                    let json = result.data.filter(j=>j.userId===i.userId)[0].data
                     delete json.delivery_addresses
                     delete json.personInfo
                     return {...i,...json,id:i.id,...connectionData.data.filter(j=>j.userId===i.userId)[0]}

@@ -110,6 +110,7 @@ const DeleteForm = async ({where})=>{
 
 const becomeStr = json =>{
     let str = ''
+    console.log(str)
     for(var i in json){
         if(json[i]){
             str+=`${i}='${json[i]}' AND `
