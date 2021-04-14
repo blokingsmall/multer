@@ -1,5 +1,6 @@
 const mysql = require('mysql2');
-//rm-uf6s6om06do7g6zpm.mysql.rds.aliyuncs.com
+//rm-uf6s6om06do7g6zpm.mysql.rds.aliyuncs.com 正式环境
+//rm-uf6s6om06do7g6zpmvo.mysql.rds.aliyuncs.com //测试环境
  const pool = mysql.createPool({
     host: 'rm-uf6s6om06do7g6zpmvo.mysql.rds.aliyuncs.com',
     user: 'form',

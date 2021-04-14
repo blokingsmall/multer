@@ -23,12 +23,7 @@ Axios.interceptors.request.use(config=>{
   return Promise.reject(err)
 })
 
-
 const app = new koa()
-
-// SelectUserAll({usersWhere:[{id:1549956}]}).then(res=>{
-//   console.log(res)
-// })
 
 app.use(cors());
 
