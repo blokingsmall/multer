@@ -5,8 +5,6 @@ const cors = require('koa2-cors')
 
 const bodyParser = require('koa-bodyparser')
 
-//const {SelectUserAll} = require('./DAO/user')
-
 const router = require('./router');
 
 const Axios = require('axios')
@@ -30,5 +28,6 @@ app.use(cors());
 app.use(bodyParser())
 
 app.use(router());
+
 app.listen(/test/g.test(enrollFrontUrl)?8081:8080)
 

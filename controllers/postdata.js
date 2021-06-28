@@ -1,15 +1,10 @@
 const {InsertForm,SelectForm,UpdateForm,DeleteForm,SelectOne} = require('./../DAO/data.js')
 const FormData = require('./../DAO/form')
-const {SelectUserAll} = require('./../DAO/user')
+const { user , delivery_address,cctalk_user } = require('./../DAO/db_model')
 const Axios = require('axios');
 const {backendUrl} = require('./../dev_options.json')
 
 module.exports = {
-    // 'GET /form_fields':async (ctx)=>{
-    //     let {id,table_key,orderNumber,courseId,userId,pageSize=10,pageNumber=1,totalNumber=10} = ctx.query;
-    //     let result = await SelectAll({where:{id,orderNumber,table_key,courseId,userId,status:1},limitConif:{pageSize,pageNumber,totalNumber}})
-    //     ctx.body = result;
-    // },
     'GET /form_fields':async (ctx)=>{
         let {orderNumber,userId} = ctx.query;
         let {data} = await SelectForm({where: {userId,orderNumber,status:1}});
@@ -56,34 +51,40 @@ module.exports = {
             let searchArr = []
             res.data.data.list.forEach(i=>{
                 searchArr.push({orderNumber:i.orderNumber,userId:i.userId,status:1})
-                searchId.push({id:i.userId})
+                searchId.push(i.userId)
             })
-            let nDate = new Date().getTime()
-            let connectionData = await SelectUserAll({usersWhere:searchId})
-            console.log('第一次请求数据时间为',new Date().getTime() - nDate)
-            let sDate = new Date().getTime()
+            let userResult = await user.findAll({attributes:[ 'id','major','graduatedSchoolCode','gender','emailAddress','birthDate','nickname','qqNumber','mobileNumber'
+            ] ,include:[
+                {
+                    model:delivery_address,
+                    where:{
+                        status:1
+                    }
+                },
+                {model:cctalk_user,attributes:['rollNumber']}
+            ],where:{id:searchId}})
+            let connectionData = userResult.map(i=>i.toJSON())
             let result = await SelectForm({where:searchArr})
-            console.log('第二次单次请求数据时间为',new Date().getTime() - sDate)
             let form_colums = await FormData.SelectForm({where:{id:formId}})
-            if(result.code===0&&connectionData.code===0){
-                let newList = res.data.data.list.map((i,index)=>{
+            if(result.code===0&&result.data.length){
+                let newList = res.data.data.list.map((i)=>{
                     let json = result.data.filter(j=>j.userId===i.userId)[0].data
                     delete json.delivery_addresses
                     delete json.personInfo
-                    return {...i,...json,id:i.id,...connectionData.data.filter(j=>j.userId===i.userId)[0]}
+                    return {...i,...json,...connectionData.find(j=>j.id===i.userId),id:i.id}
                 })
                 let filterArr =['discription','upload']
                 ctx.body = {code:0,data:newList,form_colums:form_colums.data.formdata.source.filter(i=>!filterArr.includes(i.type))}
             }
             else{
-                ctx.body = {code:1,message:'数据不一致，请联系管理员'}
+                ctx.body = {code:0,message:'数据不一致，请联系管理员',data:[],form_colums:[]}
             }
         }
       } , 
     'POST /form_fields':async (ctx)=>{      
         let { table_key,data={},userId,courseId,orderNumber='testorder',token} = ctx.request.body;
         await UpdateForm({where:{userId,orderNumber},data:{status:0}}) 
-        let Authorization = 'Bearer '+token
+        let Authorization =`Bearer ${token}`
         let {delivery_addresses={},personInfo={}} =  data;
         Object.keys(delivery_addresses).forEach(i=>{
             if(!delivery_addresses[i]){
@@ -109,30 +110,31 @@ module.exports = {
                 }
             }
         }
-        if(Object.keys(delivery_addresses).length>0){
-            var editRuslt = {};
-            try{
-                if(delivery_addresses.id){
-                    editRuslt = await Axios.put(`/delivery_addresses/${delivery_addresses.id}`,delivery_addresses,{headers:{Authorization}})
-                }
-                else{
-                    editRuslt = await Axios.post(`/delivery_addresses`,delivery_addresses,{headers:{Authorization}})
-                }
-            }
-            catch(err){
-                ctx.body = {
-                    code:1,
-                    message:'后台服务错误'
-                }
-            }
-            if(editRuslt.data.code!==0){
-                ctx.body = editRuslt.data; 
-                return;
-            }
-        }
-        ctx.body = {
-            code:1,
-        }
+        // if(Object.keys(delivery_addresses).length>0){
+        //     var editRuslt = {data:{message:'delivery_addresses',code:1}};
+        //     try{
+        //         if(delivery_addresses.id){
+        //             editRuslt = await Axios.put(`/delivery_addresses/${delivery_addresses.id}`,delivery_addresses,{headers:{Authorization}})
+        //         }
+        //         else{
+        //             editRuslt = await Axios.post(`/delivery_addresses`,delivery_addresses,{headers:{Authorization}})
+        //         }
+        //     }
+        //     catch(err){
+        //         console.log(err)
+        //         ctx.body = {
+        //             code:1,
+        //             message:'后台服务错误'
+        //         }
+        //     }
+        //     if(editRuslt.data.code!==0){
+        //         ctx.body = editRuslt.data; 
+        //         return;
+        //     }
+        //}
+        // ctx.body = {
+        //     code:1,
+        // }
         res = await InsertForm({data,table_key,userId,courseId,orderNumber}) 
         ctx.body = res; 
     },
@@ -148,3 +150,4 @@ module.exports = {
         ctx.body = res; 
     }
 }
+
