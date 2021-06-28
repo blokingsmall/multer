@@ -1,4 +1,4 @@
-const {  DataTypes  } = require('sequelize');
+const {  DataTypes,Op  } = require('sequelize');
 
 const {enrollDb,sequelize} = require('./db')
 
@@ -45,6 +45,26 @@ const user = exports.user = enrollDb.define('user',{
     indexes:[{unique:true,fields:['phoneNumber']}]
 })
 
+const form = exports.form = sequelize.define('test',{
+    name:DataTypes.STRING,
+    formdata:DataTypes.JSON,
+    rule:DataTypes.JSON
+})
+
+const user_data =  exports.user_data = sequelize.define('user_data',{
+    table_key:DataTypes.NUMBER,
+    data:DataTypes.JSON,
+    userId:DataTypes.NUMBER,
+    courseId:DataTypes.NUMBER,
+    orderNumber:DataTypes.STRING,
+    createTime:DataTypes.STRING,
+    status:DataTypes.TINYINT,
+})
+
+form.hasMany(user_data,{
+    foreignKey:'table_key'
+})
+
 user.belongsTo(cctalk_user,{
     foreignKey:'id',
     targetKey:'userId'
@@ -54,6 +74,8 @@ user.belongsTo(delivery_address,{
     targetKey:'userId'
 })
 
+
+exports.Op = Op;
 
  exports.memo =  sequelize.define('memos',{
     id:{

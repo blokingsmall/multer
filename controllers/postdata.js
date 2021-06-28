@@ -1,6 +1,5 @@
 const {InsertForm,SelectForm,UpdateForm,DeleteForm,SelectOne} = require('./../DAO/data.js')
-const FormData = require('./../DAO/form')
-const { user , delivery_address,cctalk_user } = require('./../DAO/db_model')
+const { user , delivery_address,cctalk_user,user_data,form ,Op} = require('./../DAO/db_model')
 const Axios = require('axios');
 const {backendUrl} = require('./../dev_options.json')
 
@@ -53,32 +52,39 @@ module.exports = {
                 searchArr.push({orderNumber:i.orderNumber,userId:i.userId,status:1})
                 searchId.push(i.userId)
             })
-            let userResult = await user.findAll({attributes:[ 'id','major','graduatedSchoolCode','gender','emailAddress','birthDate','nickname','qqNumber','mobileNumber'
-            ] ,include:[
+            let userResult = await user.findAll({attributes:[ 'id','major','graduatedSchoolCode','gender','emailAddress','birthDate','nickname','qqNumber','mobileNumber'] ,
+             include:[
                 {
                     model:delivery_address,
+                    required:false,
+                    attributes:['consignee','fullAddress','phoneNumber','postalCode','region'],
                     where:{
                         status:1
                     }
                 },
                 {model:cctalk_user,attributes:['rollNumber']}
             ],where:{id:searchId}})
+            
             let connectionData = userResult.map(i=>i.toJSON())
-            let result = await SelectForm({where:searchArr})
-            let form_colums = await FormData.SelectForm({where:{id:formId}})
-            if(result.code===0&&result.data.length){
-                let newList = res.data.data.list.map((i)=>{
-                    let json = result.data.filter(j=>j.userId===i.userId)[0].data
-                    delete json.delivery_addresses
-                    delete json.personInfo
-                    return {...i,...json,...connectionData.find(j=>j.id===i.userId),id:i.id}
-                })
-                let filterArr =['discription','upload']
-                ctx.body = {code:0,data:newList,form_colums:form_colums.data.formdata.source.filter(i=>!filterArr.includes(i.type))}
-            }
-            else{
-                ctx.body = {code:0,message:'数据不一致，请联系管理员',data:[],form_colums:[]}
-            }
+            
+            let result = await form.findOne({ include:{
+                    model:user_data,
+                    required:false,
+                    where:{[Op.or]:searchArr}
+                },
+                where:{id:formId}
+            })
+            let { user_data:formData, formdata={}} = result.toJSON()
+            let newList = res.data.data.list.map((i)=>{
+                let json = formData.find(j=>j.userId===i.userId).data;
+                delete json.delivery_addresses
+                delete json.personInfo
+                return {...i,...json,...connectionData.find(j=>j.id===i.userId),id:i.id}
+            })
+            console.log(newList)
+            let filterArr =['discription','upload']
+            ctx.body = {code:0,data:newList,form_colums:formdata.source.filter(i=>!filterArr.includes(i.type))}
+           
         }
       } , 
     'POST /form_fields':async (ctx)=>{      

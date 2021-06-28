@@ -9,9 +9,9 @@ const test_db_config = /test/.test(enrollFrontUrl)?{
   enrollUser:'form',
   enrollPassword:'LzRb1pVv^HjL5Ndd',
   enrollDataBase:'test_enroll',
-  database:'form'
+  database:'test_form'
 }:{
-  host:'rm-uf6s6om06do7g6zpmvo.mysql.rds.aliyuncs.com',
+  host:'rm-uf6s6om06do7g6zpm.mysql.rds.aliyuncs.com',
   enrollUser:'zzh',
   enrollPassword:'MKXDCFq2NIYpDNYVHWMis4qkhN0f5BzH',
   user:'form',
@@ -19,6 +19,7 @@ const test_db_config = /test/.test(enrollFrontUrl)?{
   enrollDataBase:'enroll',
   database:'form'
 }
+
 
 const enrollDb = new Sequelize(test_db_config.enrollDataBase,test_db_config.enrollUser,test_db_config.enrollPassword,{
   dialect: 'mysql',
@@ -35,9 +36,14 @@ const enrollDb = new Sequelize(test_db_config.enrollDataBase,test_db_config.enro
   },
 })
 
-const sequelize = new Sequelize('form',test_db_config.user,test_db_config.password,{
+const sequelize = new Sequelize(test_db_config.database,test_db_config.user,test_db_config.password,{
   host:test_db_config.host,
   dialect: 'mysql',
+  define:{
+    freezeTableName: true,
+    charset: 'utf8',
+    timestamps: false
+  }, 
   pool: {
     max:15,
     idle: 30000,
@@ -49,7 +55,7 @@ const sequelize = new Sequelize('form',test_db_config.user,test_db_config.passwo
     host: test_db_config.host,
     user:test_db_config.user,
     password:test_db_config.password,
-    database:'form',
+    database:test_db_config.database,
     waitForConnections: true,
     connectionLimit: 4,
     queueLimit: 0,
