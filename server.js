@@ -29,5 +29,5 @@ app.use(bodyParser())
 
 app.use(router());
 
-app.listen(/test/g.test(enrollFrontUrl)?8081:8080)
+app.listen(/test/g.test(enrollFrontUrl)?8058:8080)
 

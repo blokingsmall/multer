@@ -1,1 +1,1 @@
-{"backendUrl":"https://testadm.houbo.org","enrollFrontUrl":"https://testenroll.houbo.org","backendFormUrl":"https://testform-api.houbo.org","formLocation":"http://192.168.66.18:3002","workShopLocation":"http://192.168.66.18:3006","frontLocation":"http://192.168.66.18:3000"}
+{"backendUrl":"https://testadm.houbo.org","enrollFrontUrl":"https://testenroll.houbo.org","backendFormUrl":"https://form-api-test.houbo.org","formLocation":"http://192.168.66.18:3002","workShopLocation":"http://192.168.66.18:3006","frontLocation":"http://192.168.66.18:3000"}

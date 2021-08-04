@@ -52,7 +52,7 @@ module.exports = {
                 searchArr.push({orderNumber:i.orderNumber,userId:i.userId,status:1})
                 searchId.push(i.userId)
             })
-            let userResult = await user.findAll({attributes:[ 'id','major','graduatedSchoolCode','gender','emailAddress','birthDate','nickname','qqNumber','mobileNumber'] ,
+            let userResult = await user.findAll({attributes:['id','major','graduatedSchoolCode','gender','emailAddress','birthDate','nickname','qqNumber','mobileNumber'] ,
              include:[
                 {
                     model:delivery_address,
@@ -62,7 +62,9 @@ module.exports = {
                         status:1
                     }
                 },
-                {model:cctalk_user,attributes:['rollNumber']}
+                {
+                    model:cctalk_user,attributes:['rollNumber']
+                }
             ],where:{id:searchId}})
             
             let connectionData = userResult.map(i=>i.toJSON())
@@ -81,7 +83,6 @@ module.exports = {
                 delete json.personInfo
                 return {...i,...json,...connectionData.find(j=>j.id===i.userId),id:i.id}
             })
-            console.log(newList)
             let filterArr =['discription','upload']
             ctx.body = {code:0,data:newList,form_colums:formdata.source.filter(i=>!filterArr.includes(i.type))}
            
@@ -116,31 +117,17 @@ module.exports = {
                 }
             }
         }
-        // if(Object.keys(delivery_addresses).length>0){
-        //     var editRuslt = {data:{message:'delivery_addresses',code:1}};
-        //     try{
-        //         if(delivery_addresses.id){
-        //             editRuslt = await Axios.put(`/delivery_addresses/${delivery_addresses.id}`,delivery_addresses,{headers:{Authorization}})
-        //         }
-        //         else{
-        //             editRuslt = await Axios.post(`/delivery_addresses`,delivery_addresses,{headers:{Authorization}})
-        //         }
-        //     }
-        //     catch(err){
-        //         console.log(err)
-        //         ctx.body = {
-        //             code:1,
-        //             message:'后台服务错误'
-        //         }
-        //     }
-        //     if(editRuslt.data.code!==0){
-        //         ctx.body = editRuslt.data; 
-        //         return;
-        //     }
-        //}
-        // ctx.body = {
-        //     code:1,
-        // }
+        if(Object.keys(delivery_addresses).length>0){
+            if(delivery_addresses.fullAddress){
+                delivery_addresses.fullAddress = unescape (delivery_addresses.fullAddress)
+            }
+            if(delivery_addresses.id){
+                editRuslt = await Axios.put(`/delivery_addresses/${delivery_addresses.id}`,delivery_addresses,{headers:{Authorization}})
+            }
+            else{
+                editRuslt = await Axios.post(`/delivery_addresses`,delivery_addresses,{headers:{Authorization}})
+            }
+        }
         res = await InsertForm({data,table_key,userId,courseId,orderNumber}) 
         ctx.body = res; 
     },
