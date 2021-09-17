@@ -80,11 +80,13 @@ module.exports = {
                 where: { id: formId }
             })
             let { user_data: formData, formdata = {} } = result.toJSON()
+
             let newList = res.data.data.list.map((i) => {
-                let json = formData.find(j => j.userId === i.userId).data;
-                delete json.delivery_addresses
-                delete json.personInfo
-                return { ...i, ...json, ...connectionData.find(j => j.id === i.userId), id: i.id }
+                let json = formData.find(j => j.userId === i.userId);
+                if (!json) return ''
+                delete json.data.delivery_addresses
+                delete json.data.personInfo
+                return { ...i, ...json.data, ...connectionData.find(j => j.id === i.userId), id: i.id }
             })
             let filterArr = ['discription', 'upload']
             ctx.body = { code: 0, data: newList, form_colums: formdata.source.filter(i => !filterArr.includes(i.type)) }
