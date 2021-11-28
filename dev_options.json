@@ -1,7 +1,7 @@
 {
     "backendUrl": "https://testadm.houbo.org",
     "enrollFrontUrl": "https://testenroll.houbo.org",
-    "backendFormUrl": "http://61.165.181.158:8887",
+    "backendFormUrl": "http://116.238.30.20:8887",
     "formLocation": "http://192.168.66.18:3002",
     "workShopLocation": "http://192.168.66.18:3006",
     "frontLocation": "http://192.168.66.18:3000"

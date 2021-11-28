@@ -55,7 +55,7 @@ module.exports = {
     if (result.code !== 0) {
       ctx.body = {
         code: 1,
-        message: '没有找到相对于的表单数据'
+        message: '没有找到相对的表单数据'
       }
     } else {
       delete result.data.id
